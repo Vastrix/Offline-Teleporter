@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.Listener;
 
 public class OfflineTeleporter extends JavaPlugin implements Listener{
-	public File data = (new File(getDataFolder(), "/Data"));
 	private FileConfiguration config = null;
+	public FileConfiguration UserD = null;
 	
 	@Override
 	public void onEnable(){
@@ -44,15 +44,16 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	@EventHandler
 	public void joinEvent(PlayerJoinEvent event){ //check if the player has a user file, if not create one AND TP him to a possible loc!
 		String player = event.getPlayer().getName();
-		if (!new File(data, player + ".yml").exists()){
+		if (!(new File(getDataFolder(),"/Data/"+player+".yml").exists())){
 			try{createFile(player);}catch(IOException rr) {getLogger().info("Couldn't close the file");}
-			letsConf(player).set("name", player); //doesn't work for some reason..
+			letsConf(player);
+			UserD.set("name", player);
 			letsSave(player);
 			}
-		if (letsConf(player).getList("newPosition") != null){ //this somehow screws with the format i think..
-			getLogger().info("Not Null"); //Dbug
+		//if (letsConf(player).getString("newPosition.world") != null){ //this somehow screws with the format i think..
+			//getLogger().info("Not Null"); //Dbug
 			//TODO Add TP to loc
-		}
+		//}
 	}
 	
 	@EventHandler
@@ -60,21 +61,26 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		String player = event.getPlayer().getName();
 		Location loc = event.getPlayer().getLocation();
 		
-		getLogger().info(player+" Quits tha game!");//Dbug
-		getLogger().info(event.getPlayer().getLocation().toString());
-		letsConf(player).set("lastPosition", loc);
-		letsSave(player);
+		letsConf(player); //sets UserD to the player
+		UserD.set("lastPosition.world", loc.getWorld().getName());
+		UserD.set("lastPosition.x", loc.getBlockX());
+		UserD.set("lastPosition.y", loc.getBlockY());
+		UserD.set("lastPosition.z", loc.getBlockZ());
+		UserD.set("lastPosition.yaw", loc.getYaw());
+		UserD.set("lastPosition.pitch", loc.getPitch());
+		letsSave(player); //Saves that file and puts UserD back to null to prevent confusion
 	}	
 	
-	public FileConfiguration letsConf(String player){// return a FileConfig variable (to play around with)
+	public void letsConf(String player){// return a FileConfig variable (to play around with)
 		File playerFile = new File(getDataFolder(), "/Data/"+player+".yml");
 		FileConfiguration playerc = YamlConfiguration.loadConfiguration(playerFile);
-		return playerc;
+		UserD = playerc;
 	}
 	
 	public void letsSave(String player){ //saves the player.yml
 		File playerFile = new File(getDataFolder(), "/Data/"+player+".yml");
-		try {letsConf(player).save(playerFile);} catch(IOException ex) {getLogger().info("Player file not found! | My fault! :(  l62");}
+		try {UserD.save(playerFile);} catch(IOException ex) {getLogger().info("Player file not found! | My fault! :(  l62");}
+		UserD = null;
 	}
 	
 	public void createFile(String name) throws IOException{// "throws" is basically a try statement, right? :s | Had too add "throws" cause of l95 and l96 :s
