@@ -8,4 +8,10 @@ Everything in the Pre-Alpha stage will have version 0.0!
 
 
 Since this is my first plugin, i'll be //documenting every step so that people like me(newbies) can learn
-from it and so that Advanced Programmers can easily help out (If they want to!) :)  
+from it and so that Advanced Programmers can easily help out (If they want to!) :)
+
+Features
+--------------
+- Tp to an offline Player
+- Tp an offline player to your position (when he logs in)
+- Your Ideas!? :)
