@@ -14,4 +14,5 @@ Features
 --------------
 - Tp to an offline Player
 - Tp an offline player to your position (when he logs in)
+- Auto tab complete for offline player names (really no idea as to how atm :s)
 - Your Ideas!? :)
