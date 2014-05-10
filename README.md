@@ -10,9 +10,9 @@ Everything in the Pre-Alpha stage will have version 0.0!
 Since this is my first plugin, i'll be //documenting every step so that people like me(newbies) can learn
 from it and so that Advanced Programmers can easily help out (If they want to!) :)
 
-Features
+To-Do List
 --------------
-- Tp to an offline Player
+- ~~Tp to an offline Player~~ :white_check_mark:
 - Tp an offline player to your position (when he logs in)
 - Auto tab complete for offline player names (really no idea as to how atm :s)
 - Your Ideas!? :)
