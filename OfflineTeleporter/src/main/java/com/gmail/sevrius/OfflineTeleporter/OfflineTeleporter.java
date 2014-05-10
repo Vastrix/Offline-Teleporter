@@ -3,7 +3,9 @@ import java.io.*;
 import java.nio.file.Files;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -74,23 +76,23 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("otp")){
-			if(!(sender instanceof Player)){sender.sendMessage("You're not a player! :(");}else{
+			if(!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You're not a player! :(");}else{
 				if(args.length > 1){sender.sendMessage("Too many Arguments!");}else{
 					Player player = (Player) sender; //Casting the sender variable to a player type variable (Only possible since CommandSender implements Player!)
-					if (!(sender.hasPermission("otp.otp"))||!(sender.isOp())){sender.sendMessage("you don't have the permission!");}else{
-						if(!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){player.sendMessage("Are you sure you typed the name correct? ("+args[0]+")");player.sendMessage("If so than that player has never logged on..");}else{
+					if (!(sender.hasPermission("otp.otp"))||!(sender.isOp())){sender.sendMessage(ChatColor.RED+"you don't have the permission!");}else{
+						if(!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){player.sendMessage(ChatColor.RED+"Are you sure you typed the name correct? ("+args[0]+")");}else{
 							letsConf(args[0]);
 							Location loc = new Location(player.getWorld(), 8,64,8);
-							player.sendMessage("1: "+loc.toString());//Dbug
 							loc.setWorld(Bukkit.getServer().getWorld(UserD.getString("lastPosition.world")));
-							loc.setX(UserD.getDouble("lastposition.x"));
-							loc.setY(UserD.getDouble("lastposition.y"));
+							loc.setX(UserD.getDouble("lastPosition.x"));
+							loc.setY(UserD.getDouble("lastPosition.y"));
 							loc.setZ(UserD.getDouble("lastPosition.z"));
 							loc.setYaw((float) UserD.getDouble("lastPosition.yaw")); //Casts it to a Float
 							loc.setPitch((float)UserD.getDouble("lastPosition.pitch"));
-							player.sendMessage("2: "+loc.toString());//Dbug
 							UserD = null;
 							player.teleport(loc, TeleportCause.COMMAND);
+							player.sendMessage(ChatColor.GREEN+"Successfully teleported to "+args[0]+"'s logout location!");
+							player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT,5,1);
 							return true;
 						}}}}
 			return false;
