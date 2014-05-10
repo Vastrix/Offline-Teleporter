@@ -1,3 +1,10 @@
 name: Offline Teleporter
 main: com.gmail.sevrius.OfflineTeleporter.OfflineTeleporter
-version: 0.1
+version: 0.0
+
+commands:
+   otp:
+      description: Teleports you to an offline player.
+      usage: /<command> [player]
+      permission: otp.otp
+      permission-message: You don't have the permission otp.otp

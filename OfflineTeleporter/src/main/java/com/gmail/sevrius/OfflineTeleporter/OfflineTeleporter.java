@@ -1,15 +1,23 @@
 package com.gmail.sevrius.OfflineTeleporter;
 import java.io.*;
 import java.nio.file.Files;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.Listener;
+import org.bukkit.Server;
 
 public class OfflineTeleporter extends JavaPlugin implements Listener{
 	private FileConfiguration config = null;
@@ -59,17 +67,38 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event){ //put the player's loc in his file
 		String player = event.getPlayer().getName();
-		Location loc = event.getPlayer().getLocation();
-		
-		letsConf(player); //sets UserD to the player
-		UserD.set("lastPosition.world", loc.getWorld().getName());
-		UserD.set("lastPosition.x", loc.getBlockX());
-		UserD.set("lastPosition.y", loc.getBlockY());
-		UserD.set("lastPosition.z", loc.getBlockZ());
-		UserD.set("lastPosition.yaw", loc.getYaw());
-		UserD.set("lastPosition.pitch", loc.getPitch());
-		letsSave(player); //Saves that file and puts UserD back to null to prevent confusion
+		Location loc = event.getPlayer().getLocation();	
+		letsSet(player, "lastPosition", loc);
 	}	
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+		if(cmd.getName().equalsIgnoreCase("otp")){
+			if(!(sender instanceof Player)){sender.sendMessage("You're not a player! :(");}else{
+				if(args.length > 1){sender.sendMessage("Too many Arguments!");}else{
+					Player player = (Player) sender; //Casting the sender variable to a player type variable (Only possible since CommandSender implements Player!)
+					if (!(sender.hasPermission("otp.otp"))||!(sender.isOp())){sender.sendMessage("you don't have the permission!");}else{
+						if(!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){player.sendMessage("Are you sure you typed the name correct? ("+args[0]+")");player.sendMessage("If so than that player has never logged on..");}else{
+							letsConf(args[0]);
+							Location loc = new Location(player.getWorld(), 8,64,8);
+							player.sendMessage("1: "+loc.toString());//Dbug
+							loc.setWorld(Bukkit.getServer().getWorld(UserD.getString("lastPosition.world")));
+							loc.setX(UserD.getDouble("lastposition.x"));
+							loc.setY(UserD.getDouble("lastposition.y"));
+							loc.setZ(UserD.getDouble("lastPosition.z"));
+							loc.setYaw((float) UserD.getDouble("lastPosition.yaw")); //Casts it to a Float
+							loc.setPitch((float)UserD.getDouble("lastPosition.pitch"));
+							player.sendMessage("2: "+loc.toString());//Dbug
+							UserD = null;
+							player.teleport(loc, TeleportCause.COMMAND);
+							return true;
+						}}}}
+			return false;
+		}else if(cmd.getName().equalsIgnoreCase("otphere")){
+			
+		}
+		return false;
+	}
 	
 	public void letsConf(String player){// return a FileConfig variable (to play around with)
 		File playerFile = new File(getDataFolder(), "/Data/"+player+".yml");
@@ -81,6 +110,17 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		File playerFile = new File(getDataFolder(), "/Data/"+player+".yml");
 		try {UserD.save(playerFile);} catch(IOException ex) {getLogger().info("Player file not found! | My fault! :(  l62");}
 		UserD = null;
+	}
+	
+	public void letsSet(String player, String list, Location loc){
+		letsConf(player);
+			UserD.set(list+"."+"world", loc.getWorld().getName());
+			UserD.set(list+"."+"x", loc.getX());
+			UserD.set(list+"."+"y", loc.getY()); //Wanted to use reflections but Tivec said it'd be a bad idea :P
+			UserD.set(list+"."+"z", loc.getZ());
+			UserD.set(list+"."+"yaw", loc.getYaw());
+			UserD.set(list+"."+"pitch", loc.getPitch());
+		letsSave(player);
 	}
 	
 	public void createFile(String name) throws IOException{// "throws" is basically a try statement, right? :s | Had too add "throws" cause of l95 and l96 :s
