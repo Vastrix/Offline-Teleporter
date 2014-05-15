@@ -19,4 +19,4 @@ To-Do List
 
 Awesome people!
 -----------------
-- [Tivec](https://github.com/tivec) *Without him this plugin would not be here!, He thought me a lot!*
+- [Tivec](https://github.com/tivec) *Without him this plugin would not be here!, He taught me a lot!*
