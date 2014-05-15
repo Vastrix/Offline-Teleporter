@@ -14,3 +14,4 @@ newPosition:
   z: null
   yaw: null
   pitch: null
+  setter:

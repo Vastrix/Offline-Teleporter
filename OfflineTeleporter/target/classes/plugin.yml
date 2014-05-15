@@ -6,5 +6,20 @@ commands:
    otp:
       description: Teleports you to an offline player.
       usage: /<command> [player]
-      permission: otp.otp
-      permission-message: You don't have the permission otp.otp
+   cookie:
+      description: Gives a player a Cookie!
+      usage: /<command> [player]
+   otphere:
+      description: Allows you to set the player's "spawn" position
+      usage: /<command> [player] {message}
+      
+permissions:
+    otp.otp:
+        description: Let's you teleport to a players logout location!
+        default: false
+    otp.cookie:
+        description: Let's you give players cookies!
+        default: false
+    otp.otphere:
+        description: Allows you to set the player's "spawn" position
+        default: false
