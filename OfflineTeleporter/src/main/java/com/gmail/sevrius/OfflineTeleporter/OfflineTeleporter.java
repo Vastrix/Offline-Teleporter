@@ -32,6 +32,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	public FileConfiguration UserD = null;
 	public BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 	private Player pjoin;
+	private String[] Stupidscheduler = new String[6];
 	
 	
 	@Override
@@ -45,14 +46,14 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			getLogger().info("Creating Data Folder..");
 			new File(getDataFolder(), "Data").mkdir();
 			}
-		reloadConfig(); //needed or does it autoload?
+		reloadConfig(); //Q:needed or does it autoload?
 		config = getConfig();
 		
 	}
 	
 	@Override
 	public void onDisable(){
-		//TODO CLeanup
+		//TODO CLeanup But since i don't make a mess.. :D
 	}
 	
 	
@@ -80,18 +81,24 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			loc.setYaw((float) UserD.getDouble("newPosition.yaw")); //Casts it to a Float
 			loc.setPitch((float)UserD.getDouble("newPosition.pitch"));
 			pjoin.teleport(loc,TeleportCause.PLUGIN);
-			scheduler.scheduleSyncDelayedTask(this, new Runnable(){ //runs run() in 20*3 ticks(3sec) Docs: http://goo.gl/aBc0hQ
+			
+			//TODO Fix this crap and put it in a new class Dammit! :P  http://puu.sh/8OjUf.png
+			Stupidscheduler[0] = UserD.getString("newPosition.setter"); //15 Lines just because bukkit doesn't add a decent(as in halt the script for this object/user) sleep function.. :(
+			if (UserD.getString("message") != null){Stupidscheduler[1]= UserD.getString("message");}else{Stupidscheduler[1]=" None";}
+			Stupidscheduler[2] = UserD.getString("newPosition.world");
+			Stupidscheduler[3] = String.valueOf(UserD.getInt("newPosition.x"));
+			Stupidscheduler[4] = String.valueOf(UserD.getInt("newPosition.y"));
+			Stupidscheduler[5] =String.valueOf(UserD.getInt("newPosition.z"));
+			scheduler.scheduleSyncDelayedTask(this, new Runnable(){ //runs run() in 20*2 ticks(2sec) Docs: http://goo.gl/aBc0hQ
 				@Override
-				public void run(){ //How to get external(out of this method) variables in here without defining them for the entire class?
+				public void run(){
 					pjoin.sendMessage(ChatColor.GRAY+"You were teleported!");
 					pjoin.sendMessage(ChatColor.DARK_PURPLE+"-----------------------------------------------------");
-					pjoin.sendMessage(UserD.getString("message"));//Dbug
-					pjoin.sendMessage(ChatColor.DARK_GRAY+"Teleporter: "+UserD.getString("newPosition.setter"));
-					if (UserD.getString("message") != null){
-						pjoin.sendMessage(ChatColor.DARK_GRAY+"   Message: "+UserD.getString("message"));}else{
-							pjoin.sendMessage(ChatColor.DARK_GRAY+"   Message: None");}
-					pjoin.sendMessage(ChatColor.DARK_GRAY+"  Prev Pos: "+UserD.getString("newPosition.world")+","+UserD.getInt("newPosition.x")+","+UserD.getInt("newPosition.y")+","+UserD.getInt("newPosition.z"));
-						}}, 20*3);
+					pjoin.sendMessage(ChatColor.DARK_GRAY+"Teleporter: "+Stupidscheduler[0]);
+					pjoin.sendMessage(ChatColor.DARK_GRAY+"   Message:"+Stupidscheduler[1]);
+					pjoin.sendMessage(ChatColor.DARK_GRAY+"  Prev Pos: "+Stupidscheduler[2]+", "+Stupidscheduler[3]+", "+Stupidscheduler[4]+", "+Stupidscheduler[5]);
+						}}, 20*2);
+			
 			UserD.set("newPosition.world",null);
 			UserD.set("newPosition.x",null);
 			UserD.set("newPosition.y",null);
@@ -139,7 +146,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
 					if (args.length < 1){sender.sendMessage(ChatColor.RED+"I'm gonna need a player name..");}else{
-						//if (sender.getName().equals(args[0])){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{
+						if (sender.getName().equals(args[0])){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{
 							if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{
 								Player player = (Player) sender;
 								Location loc = player.getLocation();
@@ -156,7 +163,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 									sender.sendMessage(ChatColor.GREEN+"With the following message:");
 									sender.sendMessage(msg);
 									return true;
-								}}}}}//}
+								}}}}}}
 		}else if (cmd.getName().equalsIgnoreCase("otpback")){
 			
 		}else if (cmd.getName().equalsIgnoreCase("cookie")){
@@ -197,7 +204,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		letsSave(player);
 	}
 	
-	public void createFile(String name) throws IOException{// "throws" is basically a try statement, right? :s | Had too add "throws" cause of l95 and l96 :s
+	public void createFile(String name) throws IOException{//Q:"throws" is basically a try statement, right? :s | Had too add "throws" cause of l95 and l96 :s
 		InputStream src = this.getResource("user.yml");
 		OutputStream os = null;
 		int readb;
@@ -209,8 +216,8 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			while ((readb = src.read(buffer)) > 0){
 				os.write(buffer, 0,readb);
 			  	}
-			} catch (IOException error) { 				  //Why is this needed since line 80 catches all the exceptions in this method anyway..?
-				getLogger().info("I did it! :( (l56-57)");//Like if something in this method throws an IOException it'll fall back to the try loop at l48, no?
+			} catch (IOException error) { 				  //Q:Why is this needed since line 80 catches all the exceptions in this method anyway..?
+				getLogger().info("I did it! :( (l56-57)");//Q:Like if something in this method throws an IOException it'll fall back to the try loop at l48, no?
 			} finally {
 				src.close(); 
 				os.close();
