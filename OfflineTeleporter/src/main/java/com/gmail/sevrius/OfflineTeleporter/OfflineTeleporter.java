@@ -28,12 +28,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 public class OfflineTeleporter extends JavaPlugin implements Listener{
-	private FileConfiguration config = null;
+	public FileConfiguration config = null;
 	public FileConfiguration UserD = null;
 	public BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-	private Player pjoin;
-	private String[] Stupidscheduler = new String[6];
-	
+	public Player pjoin;
 	
 	@Override
 	public void onEnable(){
@@ -67,7 +65,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		pjoin = getServer().getPlayer(player);
 		if (!(new File(getDataFolder(),"/Data/"+player+".yml").exists())){
 			try{createFile(player);}catch(IOException rr) {getLogger().info("Couldn't close the file");}
-			letsConf(player);
+			letsConf(player);//Sets UserD
 			UserD.set("name", player);
 			letsSave(player);
 		}
@@ -82,23 +80,18 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			loc.setPitch((float)UserD.getDouble("newPosition.pitch"));
 			pjoin.teleport(loc,TeleportCause.PLUGIN);
 			
-			//TODO Fix this crap and put it in a new class Dammit! :P  http://puu.sh/8OjUf.png
-			Stupidscheduler[0] = UserD.getString("newPosition.setter"); //15 Lines just because bukkit doesn't add a decent(as in halt the script for this object/user) sleep function.. :(
-			if (UserD.getString("message") != null){Stupidscheduler[1]= UserD.getString("message");}else{Stupidscheduler[1]=" None";}
-			Stupidscheduler[2] = UserD.getString("newPosition.world");
-			Stupidscheduler[3] = String.valueOf(UserD.getInt("newPosition.x"));
-			Stupidscheduler[4] = String.valueOf(UserD.getInt("newPosition.y"));
-			Stupidscheduler[5] =String.valueOf(UserD.getInt("newPosition.z"));
-			scheduler.scheduleSyncDelayedTask(this, new Runnable(){ //runs run() in 20*2 ticks(2sec) Docs: http://goo.gl/aBc0hQ
-				@Override
-				public void run(){
-					pjoin.sendMessage(ChatColor.GRAY+"You were teleported!");
-					pjoin.sendMessage(ChatColor.DARK_PURPLE+"-----------------------------------------------------");
-					pjoin.sendMessage(ChatColor.DARK_GRAY+"Teleporter: "+Stupidscheduler[0]);
-					pjoin.sendMessage(ChatColor.DARK_GRAY+"   Message:"+Stupidscheduler[1]);
-					pjoin.sendMessage(ChatColor.DARK_GRAY+"  Prev Pos: "+Stupidscheduler[2]+", "+Stupidscheduler[3]+", "+Stupidscheduler[4]+", "+Stupidscheduler[5]);
-						}}, 20*2);
-			
+			scheduler.scheduleSyncDelayedTask(this, new Scheduler(this, pjoin.getName(), UserD.getString("newPosition.world"), UserD.getString("newPosition.setter"), UserD.getString("message"), String.valueOf(UserD.getInt("newPosition.x")), String.valueOf(UserD.getInt("newPosition.y")), String.valueOf(UserD.getInt("newPosition.z"))), 20*2);
+			letsSave(player);
+		}
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent event){ //put the player's loc in his file
+		String player = event.getPlayer().getName();
+		Location loc = event.getPlayer().getLocation();	
+		letsSet(player, "lastPosition", loc);
+		letsConf(player);
+		if (UserD.getString("newPosition.world") != null){
 			UserD.set("newPosition.world",null);
 			UserD.set("newPosition.x",null);
 			UserD.set("newPosition.y",null);
@@ -109,13 +102,6 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			UserD.set("message",null);
 			letsSave(player);
 		}
-	}
-	
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event){ //put the player's loc in his file
-		String player = event.getPlayer().getName();
-		Location loc = event.getPlayer().getLocation();	
-		letsSet(player, "lastPosition", loc);
 	}	
 	
 	@Override
@@ -127,6 +113,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 						Player player = (Player) sender; //Casting the sender variable to a player type variable (Only possible since CommandSender implements Player!)
 							if (!(sender.hasPermission("otp.otp")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"you don't have the permission!");}else{ // Do note, if we were to specify a permission in the plugin.yml file, bukkit checks this for us.
 								if(!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){player.sendMessage(ChatColor.RED+"Are you sure you typed the name correct? ("+args[0]+")");}else{
+									
 									letsConf(args[0]);
 									Location loc = new Location(player.getWorld(), 8,64,8);
 									loc.setWorld(Bukkit.getServer().getWorld(UserD.getString("lastPosition.world")));
@@ -146,29 +133,57 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
 					if (args.length < 1){sender.sendMessage(ChatColor.RED+"I'm gonna need a player name..");}else{
-						if (sender.getName().equals(args[0])){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{
-							if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{
-								Player player = (Player) sender;
-								Location loc = player.getLocation();
-								letsSet(args[0],"newPosition",loc);
-								letsConf(args[0]); UserD.set("newPosition.setter", player.getName()); letsSave(args[0]);
-								sender.sendMessage(ChatColor.GREEN+"Successfully set "+args[0]+"'s login location!");
-								if (!(args.length > 1)){return true;}else{
-									String[] msgl = Arrays.copyOfRange(args, 1, args.length);
-									String msg = "";
-									for(String i: msgl){
-										msg = msg +" "+i;//TODO Fix the space at the start
-									}
-									letsConf(args[0]); UserD.set("message",msg); letsSave(args[0]);
-									sender.sendMessage(ChatColor.GREEN+"With the following message:");
-									sender.sendMessage(msg);
-									return true;
-								}}}}}}
+						if ((getServer().getPlayer(args[0]) != null) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tp command.");}else{
+							if ((sender.getName().equals(args[0])) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//That last requirement is for testing :)
+								if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{
+									
+									Player player = (Player) sender;
+									Location loc = player.getLocation();
+									letsSet(args[0],"newPosition",loc);
+									letsConf(args[0]); UserD.set("newPosition.setter", player.getName()); letsSave(args[0]);
+									sender.sendMessage(ChatColor.GREEN+"Successfully set "+args[0]+"'s login location!");
+									if (!(args.length > 1)){return true;}else{
+										String[] msgl = Arrays.copyOfRange(args, 1, args.length);
+										String msg = "";
+										for(String i: msgl){
+											msg = msg +" "+i;//TODO Fix the space at the start
+										}
+										letsConf(args[0]); UserD.set("message",msg); letsSave(args[0]);
+										sender.sendMessage(ChatColor.GREEN+"With the following message:");
+										sender.sendMessage(msg);
+										return true;
+									}}}}}}}
 		}else if (cmd.getName().equalsIgnoreCase("otpback")){
-			
+			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"Yea..I'm gonna need you to be a player! :P");}else{
+				if(!(sender.hasPermission("otp.otpback")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"Insufficient Permissions!");}else{
+					if (args.length > 0){sender.sendMessage(ChatColor.RED+"Too many arguments! (need none)");}else{
+						letsConf(sender.getName());
+						if (UserD.getString("newPosition.world") == null){sender.sendMessage(ChatColor.RED+"You can only use this once(before logging out)");}else{
+							
+							Player player = (Player) sender;
+							Location loc = new Location(player.getWorld(),8,64,8);
+							loc.setWorld(getServer().getWorld(UserD.getString("lastPosition.world")));
+							loc.setX(UserD.getDouble("lastPosition.x"));
+							loc.setY(UserD.getDouble("lastPosition.y"));
+							loc.setZ(UserD.getDouble("lastPosition.z"));
+							loc.setYaw((float) UserD.getDouble("lastPosition.yaw"));
+							loc.setPitch((float)UserD.getDouble("lastPosition.pitch"));
+							player.teleport(loc,TeleportCause.COMMAND);
+							player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT,5,1);
+							player.sendMessage(ChatColor.GREEN+"You Successfully teleported to your previous logout location!");
+							UserD.set("newPosition.world",null);
+							UserD.set("newPosition.x",null);
+							UserD.set("newPosition.y",null);
+							UserD.set("newPosition.z",null);
+							UserD.set("newPosition.yaw",null);
+							UserD.set("newPosition.pitch",null);
+							UserD.set("newPosition.setter",null);
+							UserD.set("message",null);
+							letsSave(player.getName());
+			}}}}
 		}else if (cmd.getName().equalsIgnoreCase("cookie")){
 			if (args.length > 1){sender.sendMessage(ChatColor.RED+"Too many arguments..");}else{
-				if (args.length < 1){sender.sendMessage(ChatColor.RED+"Not Enough Arguments");}else{
+				if (args.length < 1){sender.sendMessage(ChatColor.RED+"Not Enough Arguments(Need a player name!)");}else{
 					if (!(sender.hasPermission("otp.cookie")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You Don't have the Required Perms..");}else{
 						if (sender.getName().equals(args[0])){sender.sendMessage(ChatColor.RED+"You can't give cookies to yourself, Do you have any idea how sad this is? :o");}else{
 							if (Bukkit.getServer().getPlayer(args[0])== null){sender.sendMessage(ChatColor.RED+"Yea.. I'm afraid he's gonna need to be online, Or you misspelled the name?");}else{

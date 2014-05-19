@@ -1,6 +1,6 @@
 name: Offline Teleporter
 main: com.gmail.sevrius.OfflineTeleporter.OfflineTeleporter
-version: 0.1
+version: 0.2
 
 commands:
    otp:
@@ -12,6 +12,9 @@ commands:
    otphere:
       description: Allows you to set the player's "spawn" position
       usage: /<command> [player] {message}
+   otpback:
+      description: Tp's you back to the position you came from
+      usage: /<command>
       
 permissions:
     otp.otp:
@@ -22,4 +25,7 @@ permissions:
         default: false
     otp.otphere:
         description: Allows you to set the player's "spawn" position
+        default: false
+    otp.otpback:
+        description: Let's you use /otpback
         default: false
