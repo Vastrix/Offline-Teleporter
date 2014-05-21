@@ -33,5 +33,8 @@ public class Scheduler implements Runnable {
 		pjoin.sendMessage(ChatColor.DARK_GRAY+"Teleporter: "+setter);
 		pjoin.sendMessage(ChatColor.DARK_GRAY+"   Message:"+msg);
 		pjoin.sendMessage(ChatColor.DARK_GRAY+"  Prev Pos: "+world+", "+x+", "+y+", "+z);
+		if ((pjoin.hasPermission("otp.otpback")) || (pjoin.isOp())){
+			pjoin.sendMessage(ChatColor.DARK_GRAY+"You can use /otpback to go back to where you were!");
+		}
 	}
 }

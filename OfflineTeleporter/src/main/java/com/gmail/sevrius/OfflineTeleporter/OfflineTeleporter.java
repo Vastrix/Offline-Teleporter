@@ -133,7 +133,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
 					if (args.length < 1){sender.sendMessage(ChatColor.RED+"I'm gonna need a player name..");}else{
-						if ((getServer().getPlayer(args[0]) != null) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tp command.");}else{
+						if ((getServer().getPlayer(args[0]) != null) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tphere command.");}else{
 							if ((sender.getName().equals(args[0])) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//That last requirement is for testing :)
 								if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{
 									
