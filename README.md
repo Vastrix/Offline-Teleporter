@@ -15,7 +15,7 @@ To-Do List
 - ~~Tp to an offline Player~~ :white_check_mark:
 - ~~Tp an offline player to your position (when he logs in)~~:white_check_mark:
 - Auto tab complete for offline player names (really no idea as to how atm :s)
-- **Your Ideas!? :smiley:
+- **Your Ideas!? :smiley:**
 
 Awesome people!
 -----------------
