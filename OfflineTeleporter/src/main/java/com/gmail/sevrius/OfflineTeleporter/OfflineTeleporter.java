@@ -61,16 +61,16 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	
 	@EventHandler
 	public void joinEvent(PlayerJoinEvent event){ //check if the player has a user file, if not create one AND TP him to a possible loc!
-		String player = event.getPlayer().getName();
-		pjoin = getServer().getPlayer(player);
-		if (!(new File(getDataFolder(),"/Data/"+player+".yml").exists())){
+		String player = event.getPlayer().getName(); //make a string variable from the player name
+		pjoin = getServer().getPlayer(player); //make a PLAYER variable from the player name
+		if (!(new File(getDataFolder(),"/Data/"+player+".yml").exists())){ //Checks if there's already a player file, if not..
 			try{createFile(player);}catch(IOException rr) {getLogger().info("Couldn't close the file");}
 			letsConf(player);//Sets UserD
 			UserD.set("name", player);
 			letsSave(player);
 		}
 		letsConf(player);
-		if (UserD.getString("newPosition.world") != null){
+		if (UserD.getString("newPosition.world") != null){ //If world is set then someone used otphere
 			Location loc = new Location(getServer().getWorld("world"),8,64,8);
 			loc.setWorld(Bukkit.getServer().getWorld(UserD.getString("newPosition.world")));
 			loc.setX(UserD.getDouble("newPosition.x"));
@@ -86,12 +86,12 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	}
 	
 	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event){ //put the player's loc in his file
+	public void onPlayerQuit(PlayerQuitEvent event){ 
 		String player = event.getPlayer().getName();
 		Location loc = event.getPlayer().getLocation();	
-		letsSet(player, "lastPosition", loc);
+		letsSet(player, "lastPosition", loc); //put the player's loc in his file
 		letsConf(player);
-		if (UserD.getString("newPosition.world") != null){
+		if (UserD.getString("newPosition.world") != null){ //nullifies the newPosition vars (So they can't use otpback on next login)
 			UserD.set("newPosition.world",null);
 			UserD.set("newPosition.x",null);
 			UserD.set("newPosition.y",null);
@@ -107,7 +107,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 		if(cmd.getName().equalsIgnoreCase("otp")){
-			if(!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You're not a player! :(");}else{
+			if(!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You're not a player! :(");}else{ //checks if the caller is a player (or the console)
 				if(args.length > 1){sender.sendMessage(ChatColor.RED+"Too many Arguments!");}else{
 					if (args.length <1){sender.sendMessage(ChatColor.RED+"Not Enough Arguments");}else{
 						Player player = (Player) sender; //Casting the sender variable to a player type variable (Only possible since CommandSender implements Player!)
@@ -133,19 +133,19 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
 					if (args.length < 1){sender.sendMessage(ChatColor.RED+"I'm gonna need a player name..");}else{
-						if ((getServer().getPlayer(args[0]) != null) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tphere command.");}else{
-							if ((sender.getName().equals(args[0])) && !(args[0].equals("_Vastrix_"))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//That last requirement is for testing :)
-								if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{
+						if ((getServer().getPlayer(args[0]) != null)){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tphere command.");}else{//checks if the player is online
+							if ((sender.getName().equals(args[0]))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//checks if people are doing weird things :p
+								if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{//Checks if the player exists on the server
 									
 									Player player = (Player) sender;
 									Location loc = player.getLocation();
 									letsSet(args[0],"newPosition",loc);
 									letsConf(args[0]); UserD.set("newPosition.setter", player.getName()); letsSave(args[0]);
 									sender.sendMessage(ChatColor.GREEN+"Successfully set "+args[0]+"'s login location!");
-									if (!(args.length > 1)){return true;}else{
-										String[] msgl = Arrays.copyOfRange(args, 1, args.length);
+									if (!(args.length > 1)){return true;}else{//Checks if there is a msg set
+										String[] msgl = Arrays.copyOfRange(args, 1, args.length);//Sets everything after the second arg in the msgl array
 										String msg = "";
-										for(String i: msgl){
+										for(String i: msgl){//putting everything from the array in a string
 											msg = msg +" "+i;//TODO Fix the space at the start
 										}
 										letsConf(args[0]); UserD.set("message",msg); letsSave(args[0]);
@@ -219,7 +219,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		letsSave(player);
 	}
 	
-	public void createFile(String name) throws IOException{//Q:"throws" is basically a try statement, right? :s | Had too add "throws" cause of l95 and l96 :s
+	public void createFile(String name) throws IOException{//Q:"throws" is basically a try statement, right? :s | Had too add "throws" :s
 		InputStream src = this.getResource("user.yml");
 		OutputStream os = null;
 		int readb;
@@ -231,8 +231,8 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 			while ((readb = src.read(buffer)) > 0){
 				os.write(buffer, 0,readb);
 			  	}
-			} catch (IOException error) { 				  //Q:Why is this needed since line 80 catches all the exceptions in this method anyway..?
-				getLogger().info("I did it! :( (l56-57)");//Q:Like if something in this method throws an IOException it'll fall back to the try loop at l48, no?
+			} catch (IOException error) { 				  //Q:Why is this needed since line 222 catches all the exceptions in this method anyway..?
+				getLogger().info("I did it! :( (l56-57)");//Q:Like if something in this method throws an IOException it'll fall back to the try loop at l67, no?
 			} finally {
 				src.close(); 
 				os.close();
