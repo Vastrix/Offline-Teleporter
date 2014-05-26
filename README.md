@@ -15,8 +15,13 @@ To-Do List
 - ~~Tp to an offline Player~~ :white_check_mark:
 - ~~Tp an offline player to your position (when he logs in)~~:white_check_mark:
 - Auto tab complete for offline player names (really no idea as to how atm :s)
-- Your Ideas!? :)
+- **Your Ideas!? :smiley:
 
 Awesome people!
 -----------------
 - **[Tivec](https://github.com/tivec) *Without him this plugin would not be here!, He taught me a lot!***
+- [TheZorro266](https://github.com/theZorro266) *He also helped me a lot, and helped me come up with the idea :)*
+- [Fogger](https://github.com/Fogger) *Motivation*
+- [Not Enough Mods](http://bot.notenoughmods.com/) *For being an awesome and friendly community and for being a great source of info for mc mods fans!*
+
+>! Wonder if this works
