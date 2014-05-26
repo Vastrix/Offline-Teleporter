@@ -23,5 +23,3 @@ Awesome people!
 - [TheZorro266](https://github.com/theZorro266) *He also helped me a lot, and helped me come up with the idea :)*
 - [Fogger](https://github.com/Fogger) *Motivation*
 - [Not Enough Mods](http://bot.notenoughmods.com/) *For being an awesome and friendly community and for being a great source of info for mc mods fans!*
-
->! Wonder if this works
