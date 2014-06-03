@@ -1,6 +1,6 @@
 name: Offline Teleporter
 main: com.gmail.sevrius.OfflineTeleporter.OfflineTeleporter
-version: 0.2
+version: 0.3
 
 commands:
    otp:

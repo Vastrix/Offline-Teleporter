@@ -1,20 +1,18 @@
 package com.gmail.sevrius.OfflineTeleporter;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Arrays;
-import org.bukkit.scheduler.BukkitRunnable;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,35 +21,56 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Server;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 
 public class OfflineTeleporter extends JavaPlugin implements Listener{
 	public FileConfiguration config = null;
 	public FileConfiguration UserD = null;
 	public BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 	public Player pjoin;
+	public HashMap<String, String> uuids = new HashMap<String, String>(); //playername, UUID
 	
 	@Override
 	public void onEnable(){
 		getServer().getPluginManager().registerEvents(this, this);
-		if(!new File(getDataFolder(), "config.yml").exists()){ //Check for our config
+		if(!(new File(getDataFolder(), "config.yml").exists())){ //Check for our config
 			getLogger().info("Creating Config.yml file..");
 			saveDefaultConfig();
+			reloadConfig();
+			}else if((getConfig().getDouble("Version")) != (Double.parseDouble((this.getDescription().getVersion())))){
+				Double vers = getConfig().getDouble("Version");
+				getConfig().set("Version", Double.parseDouble(this.getDescription().getVersion()));
+				
+				if (vers <= 0.2){//Q: Good way to add new entries?
+					getLogger().info("Changing map structure..");
+					File[] folder = new File(getDataFolder(),"/Data/").listFiles();
+					if (folder.length >= 1){for (File i:folder){i.delete();}}
+				}
+				this.saveConfig();
 			}
-		if(!new File(getDataFolder(), "Data").exists()){ //check for our Data Folder
+		
+		if(!(new File(getDataFolder(), "Data").exists())){ //check for our Data Folder
 			getLogger().info("Creating Data Folder..");
 			new File(getDataFolder(), "Data").mkdir();
 			}
 		reloadConfig(); //Q:needed or does it autoload?
-		config = getConfig();
 		
+		File[] folder = new File(getDataFolder(),"/Data/").listFiles();
+		getLogger().info("Mapping UUID's..");//
+		for(File i:folder){
+			if (i.isFile()){
+				String name = i.getName().substring(0, i.getName().lastIndexOf("."));
+				letsConf(name);
+				if (UserD.getString("UUID") != null){ //Putting stuff in the uuid hashmap
+				uuids.put(name, UserD.getString("UUID"));}else{getLogger().info("error: No UUID in the userfile: "+i.getName());}
+				UserD = null;
+			}}
+		getLogger().info("Finished Mapping! ("+uuids.size()+")");
 	}
 	
 	@Override
 	public void onDisable(){
-		//TODO CLeanup But since i don't make a mess.. :D
+		//CLeanup, But since i don't make a mess.. :D
 	}
 	
 	
@@ -62,12 +81,23 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 	@EventHandler
 	public void joinEvent(PlayerJoinEvent event){ //check if the player has a user file, if not create one AND TP him to a possible loc!
 		String player = event.getPlayer().getName(); //make a string variable from the player name
-		pjoin = getServer().getPlayer(player); //make a PLAYER variable from the player name
-		if (!(new File(getDataFolder(),"/Data/"+player+".yml").exists())){ //Checks if there's already a player file, if not..
+		pjoin = getServer().getPlayer(event.getPlayer().getUniqueId()); //make a PLAYER variable from the player's UUID
+		
+		if (!(uuids.containsValue(pjoin.getUniqueId().toString()))){ //Checks if there's already a player file, if not..
 			try{createFile(player);}catch(IOException rr) {getLogger().info("Couldn't close the file");}
 			letsConf(player);//Sets UserD
-			UserD.set("name", player);
+			UserD.set("UUID", pjoin.getUniqueId().toString()); //Saving the UUID
 			letsSave(player);
+			uuids.put(pjoin.getName(), pjoin.getUniqueId().toString()); //Updating Hashmap
+		}else{
+			String key = getkey(pjoin.getPlayer().getUniqueId().toString());
+			if (!(key.equals(pjoin.getName()))){ //If his name has changed..
+				File pfile = new File(getDataFolder(),"/Data/"+key+".yml");
+				File nname = new File(pjoin.getName());
+				pfile.renameTo(nname); //Changing the player file name to the most recent name. TODO Test
+				uuids.remove(key); //Updating uuid hashmap
+				uuids.put(pjoin.getName(), pjoin.getUniqueId().toString());
+			}
 		}
 		letsConf(player);
 		if (UserD.getString("newPosition.world") != null){ //If world is set then someone used otphere
@@ -128,7 +158,6 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 									player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT,5,1); //Can't add the ender effect, Blaming Bukkit ;(
 									return true;
 								}}}}}
-			return false;
 		}else if(cmd.getName().equalsIgnoreCase("otphere")){//TODO add Already-set Check!
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
@@ -196,6 +225,17 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 		}
 		return true; //returning true instead of false to prevent bukkit from showing the usage info TODO Add our own return value!
 	}
+	
+	
+	public String getkey(String value){
+		for (Map.Entry<String,String> entry: uuids.entrySet()){ //This will loop through the entire map |Tivec helped me understand this, entrySet() = (pseudcode)http://puu.sh/9c37T/5b3d148e2d.png
+			if (value.equals(entry.getValue())){
+				return entry.getKey().toString();
+			}
+		}
+		return null;
+	}
+	
 	public void letsConf(String player){// return a FileConfig variable (to play around with)
 		File playerFile = new File(getDataFolder(), "/Data/"+player+".yml");
 		FileConfiguration playerc = YamlConfiguration.loadConfiguration(playerFile);
