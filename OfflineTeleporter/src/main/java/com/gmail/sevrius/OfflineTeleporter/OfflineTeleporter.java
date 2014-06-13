@@ -142,9 +142,8 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 					if (args.length <1){sender.sendMessage(ChatColor.RED+"Not Enough Arguments");}else{
 						Player player = (Player) sender; //Casting the sender variable to a player type variable (Only possible since CommandSender implements Player!)
 							if (!(sender.hasPermission("otp.otp")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"you don't have the permission!");}else{ // Do note, if we were to specify a permission in the plugin.yml file, bukkit checks this for us.
-								if(!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){player.sendMessage(ChatColor.RED+"Are you sure you typed the name correct? ("+args[0]+")");}else{
-									
-									letsConf(args[0]);
+								if(casein(args[0]) == null){player.sendMessage(ChatColor.RED+"Are you sure you typed the name correct? ("+args[0]+")");}else{
+									letsConf(casein(args[0]));
 									Location loc = new Location(player.getWorld(), 8,64,8);
 									loc.setWorld(Bukkit.getServer().getWorld(UserD.getString("lastPosition.world")));
 									loc.setX(UserD.getDouble("lastPosition.x"));
@@ -159,25 +158,28 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 									return true;
 								}}}}}
 		}else if(cmd.getName().equalsIgnoreCase("otphere")){//TODO add Already-set Check!
+			String caseins;
 			if (!(sender instanceof Player)){sender.sendMessage(ChatColor.RED+"You need to be a player to do this..");}else{
 				if (!(sender.hasPermission("otp.otphere")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You don't have the right permission: "+ChatColor.DARK_GRAY+"otp.otphere");}else{
 					if (args.length < 1){sender.sendMessage(ChatColor.RED+"I'm gonna need a player name..");}else{
-						if ((getServer().getPlayer(args[0]) != null)){sender.sendMessage(ChatColor.RED+"Looks like "+args[0]+" is still online, Try using the regular /tphere command.");}else{//checks if the player is online
-							if ((sender.getName().equals(args[0]))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//checks if people are doing weird things :p
-								if (!(new File(getDataFolder(),"/Data/"+args[0]+".yml").exists())){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{//Checks if the player exists on the server
+						if (casein(args[0]) == null){sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");}else{//Checks if the player exists on the server
+							caseins = casein(args[0]);//the real player name (cased and everything)
+							if ((getServer().getPlayer(caseins) != null)){sender.sendMessage(ChatColor.RED+"Looks like "+caseins+" is still online, Try using the regular /tphere command.");}else{//checks if the player is online
+								if ((sender.getName().equals(caseins))){sender.sendMessage(ChatColor.RED+"You cannot set your own login position!");}else{//checks if people are doing weird things :p
+								
 									
 									Player player = (Player) sender;
 									Location loc = player.getLocation();
-									letsSet(args[0],"newPosition",loc);
-									letsConf(args[0]); UserD.set("newPosition.setter", player.getName()); letsSave(args[0]);
-									sender.sendMessage(ChatColor.GREEN+"Successfully set "+args[0]+"'s login location!");
+									letsSet(caseins,"newPosition",loc);
+									letsConf(caseins); UserD.set("newPosition.setter", player.getName()); letsSave(caseins);
+									sender.sendMessage(ChatColor.GREEN+"Successfully set "+caseins+"'s login location!");
 									if (!(args.length > 1)){return true;}else{//Checks if there is a msg set
 										String[] msgl = Arrays.copyOfRange(args, 1, args.length);//Sets everything after the second arg in the msgl array
 										String msg = "";
 										for(String i: msgl){//putting everything from the array in a string
 											msg = msg +" "+i;//TODO Fix the space at the start
 										}
-										letsConf(args[0]); UserD.set("message",msg); letsSave(args[0]);
+										letsConf(caseins); UserD.set("message",msg); letsSave(caseins);
 										sender.sendMessage(ChatColor.GREEN+"With the following message:");
 										sender.sendMessage(msg);
 										return true;
@@ -211,16 +213,19 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 							letsSave(player.getName());
 			}}}}
 		}else if (cmd.getName().equalsIgnoreCase("cookie")){
+			String caseins;
 			if (args.length > 1){sender.sendMessage(ChatColor.RED+"Too many arguments..");}else{
 				if (args.length < 1){sender.sendMessage(ChatColor.RED+"Not Enough Arguments(Need a player name!)");}else{
 					if (!(sender.hasPermission("otp.cookie")) && !(sender.isOp())){sender.sendMessage(ChatColor.RED+"You Don't have the Required Perms..");}else{
-						if (sender.getName().equals(args[0])){sender.sendMessage(ChatColor.RED+"You can't give cookies to yourself, Do you have any idea how sad this is? :o");}else{
-							if (Bukkit.getServer().getPlayer(args[0])== null){sender.sendMessage(ChatColor.RED+"Yea.. I'm afraid he's gonna need to be online, Or you misspelled the name?");}else{
-								getServer().getPlayer(args[0]).getInventory().addItem(new ItemStack(Material.COOKIE,1));
-								getServer().broadcastMessage(ChatColor.DARK_GRAY+sender.getName()+" Gives "+getServer().getPlayer(args[0]).getName()+" A "+ChatColor.GOLD+"Cookie"+ChatColor.DARK_GRAY+"!");
-								return true;
-								//TODO add a cooldown?
-							}}}}}
+						if (casein(args[0])==null){sender.sendMessage(ChatColor.RED+"Any chance that you misstyped the name? "+args[0]);}else{
+							caseins = casein(args[0]);
+							if (sender.getName().equals(caseins)){sender.sendMessage(ChatColor.RED+"You can't give cookies to yourself, Do you have any idea how sad this is? :o");}else{
+								if (Bukkit.getServer().getPlayer(caseins)== null){sender.sendMessage(ChatColor.RED+"Yea.. I'm afraid he's gonna need to be online, Or you misspelled the name?");}else{
+									getServer().getPlayer(caseins).getInventory().addItem(new ItemStack(Material.COOKIE,1));
+									getServer().broadcastMessage(ChatColor.DARK_GRAY+sender.getName()+" Gives "+caseins+" A "+ChatColor.GOLD+"Cookie"+ChatColor.DARK_GRAY+"!");
+									return true;
+									//TODO add a cooldown?
+								}}}}}}
 	
 		}
 		return true; //returning true instead of false to prevent bukkit from showing the usage info TODO Add our own return value!
@@ -233,6 +238,28 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 				return entry.getKey().toString();
 			}
 		}
+		return null;
+	}
+	
+	/**
+	 * So, this method allows the input "adam" to return with the player file "Adam"(caps)
+	 * however!, if there are two player files (Adam and adam) than the file "adam" will return!
+	 * @param	arg	the name the user inputs 
+	 * @return		the real player name (with caps) or null if the player name isn't found
+	 */
+	public String casein(String arg){
+		int ir=0;
+		Map.Entry<String, String> target = null;
+		
+		for (Map.Entry<String,String> entry: uuids.entrySet()){
+			if (entry.getKey().equals(arg)){
+				return entry.getKey();
+			}else if (entry.getKey().equalsIgnoreCase(arg)){
+				ir++;
+				target = entry;
+			}
+		}
+		if (ir == 1 && target != null){return target.getKey();}else if (ir < 1){return null;}
 		return null;
 	}
 	
