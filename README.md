@@ -7,7 +7,7 @@ This Plugin is in **Beta** for the moment!
 Everything in the Beta stage will have the version format: 0.# ! :)
 
 
-Since this is my first plugin, i'll be //documenting every step so that people like me(newbies) can learn
+Since this is my first plugin, i'll be //documenting every step so that people (like me(newbies)) can learn
 from it and so that Advanced Programmers can easily help out (If they want to!) :)
 
 To-Do List
