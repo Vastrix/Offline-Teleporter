@@ -12,10 +12,10 @@ from it and so that Advanced Programmers can easily help out (If they want to!) 
 
 To-Do List
 --------------
-- ~~Tp to an offline Player~~ :white_check_mark:
-- ~~Tp an offline player to your position (when he logs in)~~:white_check_mark:
-- Add teleport to world spawn option! (*[Suggested by Time](https://github.com/Vastrix/Offline-Teleporter/issues/2)*)
-- Auto tab complete for offline player names (really no idea as to how atm :s)
+- [X] ~~Tp to an offline Player~~
+- [X] ~~Tp an offline player to your position (when he logs in)~~
+- [ ] Add teleport to world spawn option! (*[Suggested by Time](https://github.com/Vastrix/Offline-Teleporter/issues/2)*)
+- [ ] Auto tab complete for offline player names (really no idea as to how atm :s)
 - **Your Ideas!? :smiley:**
 
 Awesome people!
