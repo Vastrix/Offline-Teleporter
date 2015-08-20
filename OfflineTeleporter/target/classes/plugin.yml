@@ -1,6 +1,6 @@
 name: Offline Teleporter
 main: com.gmail.sevrius.OfflineTeleporter.OfflineTeleporter
-version: 0.4
+version: 0.5
 
 commands:
    otp:
@@ -15,6 +15,9 @@ commands:
    otpback:
       description: Tp's you back to the position you came from
       usage: /<command>
+   otpspawn:
+      description: TP a user to default world spawnpoint
+      usage: /otpspawn [player]
       
 permissions:
     otp.otp:
@@ -28,4 +31,7 @@ permissions:
         default: false
     otp.otpback:
         description: Let's you use /otpback
+        default: false
+    otp.otpspawn:
+        description: Allows you to send an offline player to spawn
         default: false

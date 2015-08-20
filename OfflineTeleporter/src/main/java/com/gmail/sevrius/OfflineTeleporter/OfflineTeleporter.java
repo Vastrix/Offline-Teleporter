@@ -226,8 +226,39 @@ public class OfflineTeleporter extends JavaPlugin implements Listener{
 									return true;
 									//TODO add a cooldown?
 								}}}}}}
-	
+			// Following the coding style here...
+		}else if(cmd.getName().equalsIgnoreCase("otpspawn")){
+			String caseins;
+			if (args.length < 1)
+				return false;
+			if (casein(args[0]) == null){
+				sender.sendMessage(ChatColor.RED+"Can't find the player file, Did "+args[0]+" ever login before?");
+			} else {
+				caseins = casein(args[0]);
+				if ((getServer().getPlayer(caseins) != null)) {
+					sender.sendMessage(ChatColor.RED+"Looks like "+caseins+" is still online, Try using the regular /tphere command.");
+				} else { 
+					try {
+						String changeOwner = "console";
+						if (sender instanceof Player) {
+							changeOwner = sender.getName();
+							if (!(sender.hasPermission("otp.otpspawn")) && !(sender.isOp()))
+								return false;
+						}
+						Location loc  = getServer().getWorlds().get(0).getSpawnLocation();
+						letsSet(caseins,"newPosition",loc);
+						letsConf(caseins); UserD.set("newPosition.setter", changeOwner);
+						letsSave(caseins);
+						sender.sendMessage(ChatColor.GREEN+"Successfully set "+caseins+"'s login location!");
+					} catch (Exception e) {
+						sender.sendMessage("Unable to OTP to spawn - exception caught");
+					}
+					
+				}
+			}
 		}
+		
+		
 		return true; //returning true instead of false to prevent bukkit from showing the usage info TODO Add our own return value!
 	}
 	
