@@ -23,7 +23,7 @@ To-Do List
 Awesome people!
 -----------------
 - **[Tivec](https://github.com/tivec) *Without him this plugin would not be here!, He taught me a lot!***
-- [nickewa](https://github.com/nickewa) *Help with [maintaining this plugin](https://github.com/Vastrix/Offline-Teleporter/commit/5f76f8fafc6a0505ace93045923940597ba126e1)*
+- [nickewa](https://github.com/nickewa) *Help with [maintaining this plugin](https://github.com/Vastrix/Offline-Teleporter/commit/af6b2f037cfe316e27a631cdc41233c93e15e990)*
 - [TheZorro266](https://github.com/theZorro266) *He also helped me a lot, and helped me come up with the idea :)*
 - [Fogger](https://github.com/Fogger) *Motivation*
 - [Not Enough Mods](http://bot.notenoughmods.com/) *For being an awesome and friendly community and for being a great source of info for mc mods fans!*
