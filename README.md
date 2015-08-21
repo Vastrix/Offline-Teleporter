@@ -16,7 +16,7 @@ To-Do List
 --------------
 - [X] ~~Tp to an offline Player~~
 - [X] ~~Tp an offline player to your position (when he logs in)~~
-- [X] Add teleport to world spawn option! (*[Suggested by Time](https://github.com/Vastrix/Offline-Teleporter/issues/2)*)(Fulfilled by [nickewa](https://github.com/Vastrix/Offline-Teleporter/commit/af6b2f037cfe316e27a631cdc41233c93e15e990))
+- [X] ~~Add teleport to world spawn option! (*[Suggested by Time](https://github.com/Vastrix/Offline-Teleporter/issues/2)*)(Fulfilled by [nickewa](https://github.com/Vastrix/Offline-Teleporter/commit/af6b2f037cfe316e27a631cdc41233c93e15e990))~~
 - [ ] Auto tab complete for offline player names (really no idea as to how atm :s)
 - **Your Ideas!? :smiley:**
 
