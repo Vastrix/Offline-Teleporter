@@ -25,7 +25,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener {
     public FileConfiguration UserD = null;
     public BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
     public Player pjoin;
-    public HashMap<String, String> uuids = new HashMap<String, String>(); //playername, UUID
+    public HashMap<String, String> uuids = new HashMap<>(); //playername, UUID
 
     @Override
     public void onEnable() {
@@ -75,7 +75,7 @@ public class OfflineTeleporter extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        //CLeanup, But since i don't make a mess.. :D
+        //Cleanup, But since i don't make a mess.. :D
     }
 
 
