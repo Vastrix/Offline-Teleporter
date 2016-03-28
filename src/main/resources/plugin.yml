@@ -1,37 +1,37 @@
-name: Offline Teleporter
-main: com.gmail.sevrius.offlineteleporter22.offlineteleporter
-version: 0.5
+name: OfflineTeleporter
+main: com.gmail.sevrius.offlineteleporter.OfflineTeleporter
+version: %VERSION%
 
 commands:
-   otp:
-      description: Teleports you to an offline player.
-      usage: /<command> [player]
-   cookie:
-      description: Gives a player a Cookie!
-      usage: /<command> [player]
-   otphere:
-      description: Allows you to set the player's "spawn" position
-      usage: /<command> [player] {message}
-   otpback:
-      description: Tp's you back to the position you came from
-      usage: /<command>
-   otpspawn:
-      description: TP a user to default world spawnpoint
-      usage: /otpspawn [player]
-      
+  otp:
+    description: Teleports you to an offline player.
+    usage: /<command> [player]
+  cookie:
+    description: Gives a player a Cookie!
+    usage: /<command> [player]
+  otphere:
+    description: Allows you to set the player's "spawn" position
+    usage: /<command> [player] {message}
+  otpback:
+    description: Tp's you back to the position you came from
+    usage: /<command>
+  otpspawn:
+    description: TP a user to default world spawnpoint
+    usage: /otpspawn [player]
+
 permissions:
-    otp.otp:
-        description: Let's you teleport to a players logout location!
-        default: false
-    otp.cookie:
-        description: Let's you give players cookies!
-        default: false
-    otp.otphere:
-        description: Allows you to set the player's "spawn" position
-        default: false
-    otp.otpback:
-        description: Let's you use /otpback
-        default: false
-    otp.otpspawn:
-        description: Allows you to send an offline player to spawn
-        default: false
+  otp.otp:
+    description: Let's you teleport to a players logout location!
+    default: false
+  otp.cookie:
+    description: Let's you give players cookies!
+    default: false
+  otp.otphere:
+    description: Allows you to set the player's "spawn" position
+    default: false
+  otp.otpback:
+    description: Let's you use /otpback
+    default: false
+  otp.otpspawn:
+    description: Allows you to send an offline player to spawn
+    default: false

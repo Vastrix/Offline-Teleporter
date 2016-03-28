@@ -1,2 +1,6 @@
-#								OffLineTeleporter
-Version: 0.5
+#######################################
+#####  OfflineTeleporter Config   #####
+#######################################
+dontTouch:
+  # This gets replaced during compile with the version in the pom.
+  version: %VERSION%
