@@ -1,4 +1,4 @@
-package com.gmail.sevrius.OfflineTeleporter;
+package com.gmail.sevrius.offlineteleporter2;
 
 import org.bukkit.*;
 import org.bukkit.command.Command;
