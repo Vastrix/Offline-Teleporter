@@ -1,5 +1,5 @@
 name: Offline Teleporter
-main: com.gmail.sevrius.offlineteleporter22.offlineteleporter2
+main: com.gmail.sevrius.offlineteleporter22.offlineteleporter
 version: 0.5
 
 commands:

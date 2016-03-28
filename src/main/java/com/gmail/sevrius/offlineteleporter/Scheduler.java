@@ -1,4 +1,4 @@
-package com.gmail.sevrius.offlineteleporter2;
+package com.gmail.sevrius.offlineteleporter;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
