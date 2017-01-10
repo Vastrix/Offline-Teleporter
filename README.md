@@ -1,9 +1,9 @@
 Offline Teleporter  
 ==================
-[![Build Status](https://jenkins.willsr71.net/job/OfflineTeleporter/badge/icon)](https://jenkins.willsr71.net/job/OfflineTeleporter/)
+[![Build Status](https://ci.noxal.net/job/OfflineTeleporter/badge/icon)](https://ci.noxal.net/job/OfflineTeleporter/)
 ![Java JDK v1.8][java]
-![Minecraft v1.9][mc]
-![Bukkit API v1.9-R0.1][bukkit]
+![Minecraft v1.11.2][mc]
+![Bukkit API v1.11.2-R0.1][bukkit]
 
 A bukkit plugin that let's you tp to offline players and vice versa
 
@@ -35,5 +35,5 @@ Awesome people!
 - [Not Enough Mods](http://bot.notenoughmods.com/) *For being an awesome and friendly community and for being a great source of info for mc mods fans!*
 
 [java]: https://img.shields.io/badge/Java%20JDK-v1.8-blue.svg "Java JDK 8"
-[mc]: https://img.shields.io/badge/Minecraft-v1.9-green.svg "Minecraft 1.9"
-[bukkit]: https://img.shields.io/badge/Bukkit%20API-v1.9--R0.1-lightgrey.svg "Bukkit API 1.9"
+[mc]: https://img.shields.io/badge/Minecraft-v1.11.2-green.svg "Minecraft 1.11.2"
+[bukkit]: https://img.shields.io/badge/Bukkit%20API-v1.11.2--R0.1-lightgrey.svg "Bukkit API 1.11.2"
