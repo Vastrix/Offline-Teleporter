@@ -8,7 +8,8 @@ Offline Teleporter
 A bukkit plugin that let's you tp to offline players and vice versa
 
 
-***Limited support at the moment (sorry)***
+***This project has been Abandonded***  
+I'll still accept pull requests tho!
 
 This Plugin is in **Beta** for the moment!
 Everything in the Beta stage will have the version format: 0.# ! :)
